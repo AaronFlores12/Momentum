@@ -28,7 +28,7 @@ Route::get('/', function () {
 
 // Redirigir dashboard a posts
 Route::get('/dashboard', function () {
-    return redirect()->route('posts.index');
+    return redirect()->route('post.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Rutas de autenticación
@@ -37,7 +37,8 @@ require __DIR__.'/auth.php';
 // Rutas de perfil (configuración) - usando tu archivo Settings/Profile.vue
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [SettingsProfileController::class, 'edit'])->name('profile.edit');
-    Route::post('/profile', [SettingsProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/update', [SettingsProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/avatar', [SettingsProfileController::class, 'updateAvatar'])->name('profile.avatar');
     Route::delete('/profile', [SettingsProfileController::class, 'destroy'])->name('profile.destroy');
     Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
 });
@@ -51,13 +52,14 @@ Route::middleware('auth')->group(function () {
 
 // Rutas de likes
 Route::middleware('auth')->group(function () {
-    Route::post('/posts/{post}/like', [LikeController::class, 'toggle'])
-        ->name('posts.like');
+    Route::post('/post/{post}/like', [LikeController::class, 'toggle'])
+        ->name('post.like');
 });
 
 // Rutas de usuarios y perfiles públicos
 Route::get('/users/{user}', [UserProfileController::class, 'show'])
     ->name('users.profile');
+
 
 // Rutas del sistema de seguidores
 Route::middleware('auth')->group(function () {
@@ -72,7 +74,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-// Rutas de posts - La página principal para usuarios autenticados
+// Cambiar estas rutas de posts:
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/post', [App\Http\Controllers\PostController::class, 'index'])->name('post.index');
     Route::get('/post/create', [App\Http\Controllers\PostController::class, 'create'])->name('post.create');
